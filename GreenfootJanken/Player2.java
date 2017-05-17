@@ -22,16 +22,16 @@ public class Player2 extends Actor implements Janken{
 
     /**
      * じゃんけんを行う
-     * meの変数が0でグー、1でチョキ、2でパーを出す
+     * myHandの変数が0でグー、1でチョキ、2でパーを出す
      * 結果は0があいこ、1が負け、2が勝ちとなる
      * @return じゃんけんの結果
      */
     @Override
     public int janken(){
         Random random = new Random();
-        int me = random.nextInt(3);//0:グー, 1:チョキ, 2:パー
+        this.myHand = random.nextInt(3);//0:グー, 1:チョキ, 2:パー
         Janken yourHand = (Janken) getOneIntersectingObject(null);
-        return (me - yourHand.getYourHand() + 3) % 3;//0:draw, 1:lose, 2:win
+        return (myHand - yourHand.getYourHand() + 3) % 3;//0:draw, 1:lose, 2:win
     }
 
     @Override
@@ -49,8 +49,6 @@ public class Player2 extends Actor implements Janken{
                     case 1://lose
                         turn(60);
                         move(100);
-                    case 2://win
-                        break;
                     default://do nothing
                         break;
                 }
