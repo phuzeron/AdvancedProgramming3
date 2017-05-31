@@ -14,8 +14,14 @@ public class Player1 extends Actor implements Janken{
      * Act - do whatever the Player1 wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    private int myHand;
+    private int myHand;//0:グー, 1:チョキ, 2:パー
+    private boolean refreshHand;
 
+    /**
+     * コンストラクタ
+     * directionが0で右向き、180で左向きに配置される
+     * @param direction 動物の向き
+     */
     public Player1(int direction){
         this.setRotation(direction);
     }
@@ -30,13 +36,19 @@ public class Player1 extends Actor implements Janken{
     public int janken(){
         Random random = new Random();
         this.myHand = random.nextInt(3);//0:グー, 1:チョキ, 2:パー
+        this.refreshHand = true;
         Janken yourHand = (Janken) getOneIntersectingObject(null);
         return (myHand - yourHand.getYourHand() + 3) % 3;//0:draw, 1:lose, 2:win
     }
 
     @Override
     public int getYourHand(){
-        return myHand;
+        if(!this.refreshHand){
+            Random random = new Random();
+            this.myHand = random.nextInt(3);//0:グー, 1:チョキ, 2:パー
+        }
+        this.refreshHand =  false;
+        return this.myHand;
     }
 
     @Override
@@ -47,12 +59,14 @@ public class Player1 extends Actor implements Janken{
                     case 0://draw
                         janken();
                     case 1://lose
+                        move(-10);
                         turn(60);
                         move(100);
                     default://do nothing
                         break;
                 }
             }
+            if (this.refreshHand) this.refreshHand = false;
         }else{
             move(1);
         }

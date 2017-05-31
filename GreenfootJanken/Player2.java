@@ -3,7 +3,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.Random;
 
 /**
- * Write a description of class Player1 here.
+ * Write a description of class Player2 here.
  *
  * @author phuzeron
  * @version (a version number or a date)
@@ -11,10 +11,11 @@ import java.util.Random;
 public class Player2 extends Actor implements Janken{
 
     /**
-     * Act - do whatever the Player1 wants to do. This method is called whenever
+     * Act - do whatever the Player2 wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     private int myHand;
+    private boolean refreshHand;
 
     public Player2(int direction){
         this.setRotation(direction);
@@ -30,13 +31,19 @@ public class Player2 extends Actor implements Janken{
     public int janken(){
         Random random = new Random();
         this.myHand = random.nextInt(3);//0:グー, 1:チョキ, 2:パー
+        this.refreshHand = true;
         Janken yourHand = (Janken) getOneIntersectingObject(null);
         return (myHand - yourHand.getYourHand() + 3) % 3;//0:draw, 1:lose, 2:win
     }
 
     @Override
     public int getYourHand(){
-        return myHand;
+        if(!this.refreshHand){
+            Random random = new Random();
+            this.myHand = random.nextInt(3);//0:グー, 1:チョキ, 2:パー
+        }
+        this.refreshHand =  false;
+        return this.myHand;
     }
 
     @Override
@@ -47,12 +54,14 @@ public class Player2 extends Actor implements Janken{
                     case 0://draw
                         janken();
                     case 1://lose
+                        move(-10);
                         turn(60);
                         move(100);
                     default://do nothing
                         break;
                 }
             }
+            if (this.refreshHand) this.refreshHand = false;
         }else{
             move(1);
         }
